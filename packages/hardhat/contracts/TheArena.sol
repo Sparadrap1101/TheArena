@@ -31,4 +31,24 @@ contract TheArena is ERC721 {
 	}
 
 	constructor() ERC721("Fighter", "FGHT") {}
+
+	function mintFighter(string memory _name) public payable returns (uint256) {
+		if (msg.value != 0.001 ether) revert Errors.MintValueError();
+
+		uint256 tokenId = _tokenIdCounter;
+
+		bool[10] memory newWeapons;
+		Fighter memory newFighter = Fighter(tokenId, _name, 1, 0, "Padawan", 2, 2, 2, newWeapons, 0, 0, 0);
+
+		//newFighter = _newLevelReward(newFighter);
+
+		_safeMint(msg.sender, tokenId);
+		_tokenIdCounter += 1;
+
+		fighters[tokenId] = newFighter;
+
+		emit MintFighter(newFighter);
+
+		return tokenId;
+	}
 }
