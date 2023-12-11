@@ -56,7 +56,7 @@ contract TheArena is ERC721 {
 		if (ownerOf(_tokenId) != msg.sender) revert Errors.NotTheOwner();
 
 		Fighter memory fighter = fighters[_tokenId];
-		uint256 xpRequired = (fighter.level ^ 2) * 5; // Checker si la formule convient. Checker si y'a des issues avec les maths comme ça.
+		uint256 xpRequired = (fighter.level ^ 2) * 20; // Checker si la formule convient. Checker si y'a des issues avec les maths comme ça.
 
 		if (fighter.xp < xpRequired) revert Errors.NotEnoughXP();
 
