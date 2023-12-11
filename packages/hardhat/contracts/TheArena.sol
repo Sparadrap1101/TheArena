@@ -51,4 +51,20 @@ contract TheArena is ERC721 {
 
 		return tokenId;
 	}
+
+	function newLevel(uint256 _tokenId) public {
+		if (ownerOf(_tokenId) != msg.sender) revert Errors.NotTheOwner();
+
+		Fighter memory fighter = fighters[_tokenId];
+		uint256 xpRequired = (fighter.level ^ 2) * 5; // Checker si la formule convient. Checker si y'a des issues avec les maths comme ça.
+
+		if (fighter.xp < xpRequired) revert Errors.NotEnoughXP();
+
+		//fighter = _newLevelReward(fighter);
+		// fighter.level += 1;
+
+		// fighters[_tokenId] = fighter;
+
+		emit NewLevel(fighter, fighter.level); // Add the new weapon in the event ?
+	}
 }
