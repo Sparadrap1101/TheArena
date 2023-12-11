@@ -11,7 +11,7 @@ contract TheArena is ERC721 {
 
 	uint256 private _tokenIdCounter;
 
-	bool[10] public weaponsScoreUnit; // To initialize (constant/immutable ?)
+	uint256[10] public weaponsScoreUnit; // To initialize in contructor? (constant/immutable ?)
 
 	mapping(uint256 => Fighter) public fighters;
 
@@ -40,7 +40,7 @@ contract TheArena is ERC721 {
 		bool[10] memory newWeapons;
 		Fighter memory newFighter = Fighter(tokenId, _name, 1, 0, "Padawan", 2, 2, 2, newWeapons, 0, 0, 0);
 
-		//newFighter = _newLevelReward(newFighter);
+		// newFighter = _newLevelReward(newFighter);
 
 		_safeMint(msg.sender, tokenId);
 		_tokenIdCounter += 1;
