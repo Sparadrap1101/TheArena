@@ -40,7 +40,7 @@ contract TheArena is ERC721 {
 		bool[10] memory newWeapons;
 		Fighter memory newFighter = Fighter(tokenId, _name, 1, 0, "Padawan", 2, 2, 2, newWeapons, 0, 0, 0);
 
-		// newFighter = _newLevelReward(newFighter);
+		newFighter = _newLevelReward(newFighter);
 
 		_safeMint(msg.sender, tokenId);
 		_tokenIdCounter += 1;
@@ -60,11 +60,17 @@ contract TheArena is ERC721 {
 
 		if (fighter.xp < xpRequired) revert Errors.NotEnoughXP();
 
-		//fighter = _newLevelReward(fighter);
-		// fighter.level += 1;
+		fighter = _newLevelReward(fighter);
+		fighter.level += 1;
 
-		// fighters[_tokenId] = fighter;
+		fighters[_tokenId] = fighter;
 
 		emit NewLevel(fighter, fighter.level); // Add the new weapon in the event ?
+	}
+
+	// Random & reward logic for the new level
+	function _newLevelReward(Fighter memory _fighter) internal returns (Fighter memory) {
+		// TODO
+		return _fighter; // Return le nouveau fighter, et les nouveaux attributs ?
 	}
 }
