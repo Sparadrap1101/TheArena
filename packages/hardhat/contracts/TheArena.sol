@@ -37,8 +37,21 @@ contract TheArena is ERC721 {
 
 		uint256 tokenId = _tokenIdCounter;
 
-		bool[10] memory newWeapons;
-		Fighter memory newFighter = Fighter(tokenId, _name, 1, 0, "Padawan", 2, 2, 2, newWeapons, 0, 0, 0);
+		bool[10] memory resetWeapons;
+		Fighter memory newFighter = Fighter(
+			tokenId,
+			_name,
+			1,
+			0,
+			"Padawan",
+			2,
+			2,
+			2,
+			resetWeapons,
+			0,
+			0,
+			block.timestamp
+		);
 
 		newFighter = _newLevelReward(newFighter);
 
@@ -52,10 +65,10 @@ contract TheArena is ERC721 {
 		return tokenId;
 	}
 
-	function newLevel(uint256 _tokenId) public {
-		if (ownerOf(_tokenId) != msg.sender) revert Errors.NotTheOwner();
+	function newLevel(uint256 _fighterId) public {
+		if (ownerOf(_fighterId) != msg.sender) revert Errors.NotTheOwner();
 
-		Fighter memory fighter = fighters[_tokenId];
+		Fighter memory fighter = fighters[_fighterId];
 		uint256 xpRequired = (fighter.level ^ 2) * 20; // Checker si la formule convient. Checker si y'a des issues avec les maths comme ça.
 
 		if (fighter.xp < xpRequired) revert Errors.NotEnoughXP();
@@ -63,7 +76,7 @@ contract TheArena is ERC721 {
 		fighter = _newLevelReward(fighter);
 		fighter.level += 1;
 
-		fighters[_tokenId] = fighter;
+		fighters[_fighterId] = fighter;
 
 		emit NewLevel(fighter, fighter.level); // Add the new weapon in the event ?
 	}
