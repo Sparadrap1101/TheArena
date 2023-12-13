@@ -83,7 +83,10 @@ contract TheArena is ERC721 {
 
 	// Random & reward logic for the new level
 	function _newLevelReward(Fighter memory _fighter) internal returns (Fighter memory) {
-		// TODO
+		uint256 dice1 = _getRandomValue(0, 12);
+		uint256 dice2 = _getRandomValue(0, 12);
+		uint256 dice3 = _getRandomValue(0, 12);
+
 		return _fighter; // Return le nouveau fighter, et les nouveaux attributs ?
 	}
 }
