@@ -86,6 +86,16 @@ contract TheArena is ERC721 {
 		uint256 dice1 = _getRandomValue(0, 12);
 		uint256 dice2 = _getRandomValue(0, 12);
 		uint256 dice3 = _getRandomValue(0, 12);
+		uint256 weaponIndex = dice1 + dice2 + dice3;
+
+		if (_fighter.weapons[weaponIndex]) {
+			_fighter.strength += 3;
+			_fighter.agility += 3;
+			_fighter.rapidity += 3;
+		} else {
+			_fighter.weapons[weaponIndex] = true;
+			_fighter.weaponsScore += weaponsScoreUnit[weaponIndex];
+		}
 
 		return _fighter; // Return le nouveau fighter, et les nouveaux attributs ?
 	}
