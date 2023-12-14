@@ -99,13 +99,13 @@ contract TheArena is ERC721 {
 
 		// Soit 'weaponIndex' mais on peut savoir à l'avance la stat qui monte en fonction de l'index du weapon
 		// Soit 'dice1' mais faut un multiple de 3 (ou 4) sinon la probabilité entre chaque stat à monter n'est pas égale et ça se verra à grande échelle
-		uint256 increaseStat = dice1 % 3;
+		uint256 increaseStat = dice1 % 4;
 
 		if (increaseStat == 0) {
 			_fighter.strength += 3;
 		} else if (increaseStat == 1) {
 			_fighter.agility += 3;
-		} else {
+		} else if (increaseStat == 2) {
 			_fighter.rapidity += 3;
 		}
 
