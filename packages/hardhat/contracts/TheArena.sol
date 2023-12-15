@@ -3,15 +3,21 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import { Errors } from "./libraries/Errors.sol";
 
 contract TheArena is ERC721 {
 	event MintFighter(Fighter indexed fighter);
-	event NewLevel(Fighter indexed fighter, uint256 indexed level);
+	event NewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed weaponIndex, uint256 statIncreased);
+
+	VRFCoordinatorV2Interface private immutable vrfCoordinator;
+	bytes32 private immutable keyHash;
+	uint64 private immutable subscriptionId;
 
 	uint256 private _tokenIdCounter;
 
-	uint256[10] public weaponsScoreUnit; // To initialize in contructor? (constant/immutable ?)
+	uint256[34] public weaponsScoreUnit; // To initialize in contructor? (constant/immutable ?)
 
 	mapping(uint256 => Fighter) public fighters;
 
@@ -24,7 +30,7 @@ contract TheArena is ERC721 {
 		uint256 strength;
 		uint256 agility;
 		uint256 rapidity;
-		bool[10] weapons; // Weapons & Skills, passer le bool en true quand on en gagne une
+		bool[34] weapons; // Weapons & Skills, passer le bool en true quand on en gagne une (Checker si je peux pas mettre un bool[] plutôt)
 		uint256 weaponsScore; // Ajouter le score du weapon au score déjà existant avec les valeurs unitaires des scores dans _weaponsScoreUnit
 		uint8 dailyFights;
 		uint256 firstFightTime;
@@ -37,7 +43,7 @@ contract TheArena is ERC721 {
 
 		uint256 tokenId = _tokenIdCounter;
 
-		bool[10] memory resetWeapons;
+		bool[34] memory resetWeapons;
 		Fighter memory newFighter = Fighter(
 			tokenId,
 			_name,
@@ -53,7 +59,7 @@ contract TheArena is ERC721 {
 			block.timestamp
 		);
 
-		newFighter = _newLevelReward(newFighter);
+		// newFighter = _newLevelReward(newFighter);
 
 		_safeMint(msg.sender, tokenId);
 		_tokenIdCounter += 1;
@@ -81,7 +87,6 @@ contract TheArena is ERC721 {
 		emit NewLevel(fighter, fighter.level); // Add the new weapon in the event ?
 	}
 
-	// Random & reward logic for the new level
 	function _newLevelReward(Fighter memory _fighter) internal returns (Fighter memory) {
 		uint256 dice1 = _getRandomValue(0, 12);
 		uint256 dice2 = _getRandomValue(0, 12);
