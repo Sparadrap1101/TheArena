@@ -10,6 +10,8 @@ import { Errors } from "./libraries/Errors.sol";
 contract TheArena is ERC721, VRFConsumerBaseV2 {
 	event MintFighter(Fighter indexed fighter);
 	event NewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed weaponIndex, uint256 statIncreased);
+	event RequestNewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed requestId);
+	event Fight(uint256 indexed fighterId, uint256 indexed opponentId, bool indexed isWinner);
 
 	VRFCoordinatorV2Interface private immutable vrfCoordinator;
 	bytes32 private immutable keyHash;
@@ -20,6 +22,21 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 	uint256[34] public weaponsScoreUnit; // To initialize in contructor? (constant/immutable ?)
 
 	mapping(uint256 => Fighter) public fighters;
+	mapping(uint256 => RandomRequest) public randomRequests;
+
+	enum ActionRequest {
+		FIGHT,
+		LEVEL
+	}
+
+	struct RandomRequest {
+		bool exists;
+		bool finalized;
+		uint256[] randomWords;
+		uint256 fighterId;
+		uint256 opponentId;
+		ActionRequest action;
+	}
 
 	struct Fighter {
 		uint256 tokenId; // Incrémentation basique ou mettre des infos dedans ? Faire un ERC721 et go sur IPFS avec les metadatas
