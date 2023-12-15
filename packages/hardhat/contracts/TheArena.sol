@@ -104,12 +104,13 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 
 		if (fighter.xp < xpRequired) revert Errors.NotEnoughXP();
 
-		fighter = _newLevelReward(fighter);
-		fighter.level += 1;
+		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 500000, 3);
 
-		fighters[_fighterId] = fighter;
+		randomRequests[requestId] = RandomRequest(true, false, new uint256[](0), _fighterId, 0, ActionRequest.LEVEL);
 
-		emit NewLevel(fighter, fighter.level); // Add the new weapon in the event ?
+		fighters[_fighterId].level += 1;
+
+		emit RequestNewLevel(fighter, fighter.level, requestId);
 	}
 
 	function _newLevelReward(Fighter memory _fighter) internal returns (Fighter memory) {
