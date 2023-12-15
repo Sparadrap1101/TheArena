@@ -7,7 +7,7 @@ import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import { Errors } from "./libraries/Errors.sol";
 
-contract TheArena is ERC721 {
+contract TheArena is ERC721, VRFConsumerBaseV2 {
 	event MintFighter(Fighter indexed fighter);
 	event NewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed weaponIndex, uint256 statIncreased);
 
@@ -36,7 +36,15 @@ contract TheArena is ERC721 {
 		uint256 firstFightTime;
 	}
 
-	constructor() ERC721("Fighter", "FGHT") {}
+	constructor(
+		address _vrfCoordinatorAddr,
+		bytes32 _keyHash,
+		uint64 _subscriptionId
+	) ERC721("Fighter", "FGHT") VRFConsumerBaseV2(_vrfCoordinatorAddr) {
+		vrfCoordinator = VRFCoordinatorV2Interface(_vrfCoordinatorAddr);
+		keyHash = _keyHash;
+		subscriptionId = _subscriptionId;
+	}
 
 	function mintFighter(string memory _name) public payable returns (uint256) {
 		if (msg.value != 0.001 ether) revert Errors.MintValueError();
