@@ -113,6 +113,17 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 		emit RequestNewLevel(fighter, fighter.level, requestId);
 	}
 
+	function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal override {
+		if (!randomRequests[_requestId].exists) revert Errors.DoNotExist();
+
+		randomRequests[_requestId].finalized = true;
+		randomRequests[_requestId].randomWords = _randomWords;
+
+		if (randomRequests[_requestId].action == ActionRequest.LEVEL) {
+			_newLevelReward(randomRequests[_requestId]);
+		}
+	}
+
 	function _newLevelReward(Fighter memory _fighter) internal returns (Fighter memory) {
 		uint256 dice1 = _getRandomValue(0, 12);
 		uint256 dice2 = _getRandomValue(0, 12);
