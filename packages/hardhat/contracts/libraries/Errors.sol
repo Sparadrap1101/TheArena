@@ -7,4 +7,6 @@ library Errors {
 	error NotTheOwner();
 
 	error NotEnoughXP();
+
+	error NeedToLevelUp();
 }
