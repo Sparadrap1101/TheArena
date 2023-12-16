@@ -8,10 +8,10 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import { Errors } from "./libraries/Errors.sol";
 
 contract TheArena is ERC721, VRFConsumerBaseV2 {
-	event MintFighter(Fighter indexed fighter);
+	event MintFighter(Fighter indexed fighter, uint256 indexed requestId);
 	event NewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed weaponIndex, uint256 statIncreased);
 	event RequestNewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed requestId);
-	event Fight(uint256 indexed fighterId, uint256 indexed opponentId, bool indexed isWinner);
+	event Fight(uint256 indexed fighterId, uint256 indexed opponentId, bool indexed isWinner, uint256 newXp);
 
 	VRFCoordinatorV2Interface private immutable vrfCoordinator;
 	bytes32 private immutable keyHash;
@@ -105,7 +105,6 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 		if (fighter.xp < xpRequired) revert Errors.NotEnoughXP();
 
 		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 500000, 3);
-
 		randomRequests[requestId] = RandomRequest(true, false, new uint256[](0), _fighterId, 0, ActionRequest.LEVEL);
 
 		fighters[_fighterId].level += 1;
