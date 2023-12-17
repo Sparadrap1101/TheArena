@@ -19,7 +19,7 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 
 	uint256 private _tokenIdCounter;
 
-	uint256[34] public weaponsScoreUnit; // To initialize in contructor? (constant/immutable ?)
+	uint256[34] public weaponsScoreUnit;
 
 	mapping(uint256 => Fighter) public fighters;
 	mapping(uint256 => RandomRequest) public randomRequests;
@@ -56,11 +56,13 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 	constructor(
 		address _vrfCoordinatorAddr,
 		bytes32 _keyHash,
-		uint64 _subscriptionId
+		uint64 _subscriptionId,
+		uint256[34] memory _weaponsScoreUnit
 	) ERC721("Fighter", "FGHT") VRFConsumerBaseV2(_vrfCoordinatorAddr) {
 		vrfCoordinator = VRFCoordinatorV2Interface(_vrfCoordinatorAddr);
 		keyHash = _keyHash;
 		subscriptionId = _subscriptionId;
+		weaponsScoreUnit = _weaponsScoreUnit;
 	}
 
 	function mintFighter(string memory _name) public payable returns (uint256) {
