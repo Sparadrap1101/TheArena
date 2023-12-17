@@ -9,4 +9,6 @@ library Errors {
 	error NotEnoughXP();
 
 	error NeedToLevelUp();
+
+	error DoNotExist();
 }
