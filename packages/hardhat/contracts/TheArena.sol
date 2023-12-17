@@ -86,14 +86,15 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 			block.timestamp
 		);
 
-		// newFighter = _newLevelReward(newFighter);
+		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 500000, 3);
+		randomRequests[requestId] = RandomRequest(true, false, new uint256[](0), tokenId, 0, ActionRequest.LEVEL);
 
 		_safeMint(msg.sender, tokenId);
 		_tokenIdCounter += 1;
 
 		fighters[tokenId] = newFighter;
 
-		emit MintFighter(newFighter);
+		emit MintFighter(newFighter, requestId);
 
 		return tokenId;
 	}
