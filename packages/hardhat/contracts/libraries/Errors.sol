@@ -11,4 +11,6 @@ library Errors {
 	error NeedToLevelUp();
 
 	error DoNotExist();
+
+	error TooManyFights();
 }
