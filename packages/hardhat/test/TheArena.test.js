@@ -22,3 +22,16 @@
 // // - Verify weapon & stats has been added to the Fighter
 // // - Verify it is randomly choose
 // // - Verify the event 'NewLevel()' is emit
+
+// Fight :
+// // - Verify 'dailyFights' has been incremented
+// // - Verify the Fighter can fight if he have less than 3 fights
+// // - Verify the Fighter can fight if his 3 fights were more than 12 hours ago
+// // - Verify 'firstFightTime' and 'dailyFights' reset for the case above
+// // - Verify the new Request has been created and stored in the mapping
+// // - Verify the event 'RequestFight()' is emit
+// // - Verify the new xp has been added to the Fighter
+// // - Verify the fight winner is randomly choose
+// // - Verify the event 'Fight()' is emit
+
+// Verify 'withdrawFunds()' function works
