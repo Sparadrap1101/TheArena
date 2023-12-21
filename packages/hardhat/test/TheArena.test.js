@@ -14,3 +14,11 @@
 // // - Verify the new Fighter is owned by msg.sender
 // // - Verify the NFT balance of the owner has been incremented
 // // - Verify the event 'MintFighter()' is emit
+
+// NewLevel :
+// // - Verify Fighter level has been incremented
+// // - Verify the new Request has been created and stored in the mapping
+// // - Verify the event 'RequestNewLevel()' is emit
+// // - Verify weapon & stats has been added to the Fighter
+// // - Verify it is randomly choose
+// // - Verify the event 'NewLevel()' is emit
