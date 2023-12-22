@@ -35,3 +35,9 @@
 // // - Verify the event 'Fight()' is emit
 
 // Verify 'withdrawFunds()' function works
+
+// NON HAPPY PATH //
+
+// Constructor :
+// // - Verify it reverts if a value is missing
+// // - Verify it reverts or prevent if VRFCoordinator is fake (?)
