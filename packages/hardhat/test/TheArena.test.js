@@ -41,3 +41,7 @@
 // Constructor :
 // // - Verify it reverts if a value is missing
 // // - Verify it reverts or prevent if VRFCoordinator is fake (?)
+
+// MintFighter :
+// // - Verify it reverts if value is not '0.001 eth'
+// // - Verify it reverts if name is not a string
