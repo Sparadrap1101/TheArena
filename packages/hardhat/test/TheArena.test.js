@@ -51,3 +51,12 @@
 // // - Verify it reverts if the Fighter doesn't have enough xp for the next lvl
 // // - Verify it reverts if the Fighter doesn't exists
 // // - Verify it does not give too much or too low new stats
+
+// Fight :
+// // - Verify it reverts if the Fighter doesn't exists
+// // - Verify it reverts if the Opponent doesn't exists
+// // - Verify it reverts if the Fighter is not owned by the msg.sender
+// // - Verify if reverts if the Fighter can lvl up
+// // - Verify it reverts if the Fighter have 3 or more fights in the last 12 hours
+// // - Verify you have the xp loose if you loose and the xp win if you win
+// // - Verify xp win modifies if Opponent level change, and not xp loose
