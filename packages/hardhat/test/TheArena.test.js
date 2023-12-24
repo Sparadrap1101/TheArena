@@ -45,3 +45,9 @@
 // MintFighter :
 // // - Verify it reverts if value is not '0.001 eth'
 // // - Verify it reverts if name is not a string
+
+// NewLevel :
+// // - Verify it reverts if you are not the owner of the Fighter to lvl up
+// // - Verify it reverts if the Fighter doesn't have enough xp for the next lvl
+// // - Verify it reverts if the Fighter doesn't exists
+// // - Verify it does not give too much or too low new stats
