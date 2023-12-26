@@ -8,6 +8,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   const vrfCoordinatorAddr = "";
   const keyHash = "";
   const subscriptionId = 0;
+  const weaponsScoreUnit = [];
 };
 
 module.exports.tags = ["all", "theArena", "deployments"];
