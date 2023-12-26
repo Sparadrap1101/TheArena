@@ -6,6 +6,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   const { deployer } = await getNamedAccounts();
 
   const vrfCoordinatorAddr = "";
+  const keyHash = "";
 };
 
 module.exports.tags = ["all", "theArena", "deployments"];
