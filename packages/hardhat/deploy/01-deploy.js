@@ -11,6 +11,13 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   const weaponsScoreUnit = [];
 
   const args = [vrfCoordinatorAddr, keyHash, subscriptionId, weaponsScoreUnit];
+
+  const theArena = await deploy("TheArena", {
+    from: deployer,
+    args: args,
+    log: true,
+    waitConfirmations: 6,
+  });
 };
 
 module.exports.tags = ["all", "theArena", "deployments"];
