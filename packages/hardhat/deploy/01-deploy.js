@@ -18,6 +18,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     log: true,
     waitConfirmations: 6,
   });
+
+  const developmentChains = ["hardhat", "localhost"];
 };
 
 module.exports.tags = ["all", "theArena", "deployments"];
