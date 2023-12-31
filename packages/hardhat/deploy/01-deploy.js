@@ -20,6 +20,13 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   });
 
   const developmentChains = ["hardhat", "localhost"];
+
+  if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+    log("Verifying...");
+    await verify(theArena.address, args);
+  }
+
+  log("--------------------------------");
 };
 
 module.exports.tags = ["all", "theArena", "deployments"];
