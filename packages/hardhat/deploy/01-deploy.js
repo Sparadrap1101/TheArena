@@ -8,7 +8,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   const vrfCoordinatorAddr = "";
   const keyHash = "";
   const subscriptionId = 0;
-  const weaponsScoreUnit = [];
+  const weaponsScoreUnit = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
   const args = [vrfCoordinatorAddr, keyHash, subscriptionId, weaponsScoreUnit];
 
