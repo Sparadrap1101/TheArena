@@ -12,6 +12,7 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 	event NewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed weaponIndex, uint256 statIncreased);
 	event RequestNewLevel(Fighter indexed fighter, uint256 indexed level, uint256 indexed requestId);
 	event Fight(uint256 indexed fighterId, uint256 indexed opponentId, bool indexed isWinner, uint256 newXp);
+	event RequestFight(uint256 indexed fighterId, uint256 indexed opponentId, uint256 indexed requestId);
 
 	VRFCoordinatorV2Interface private immutable vrfCoordinator;
 	bytes32 private immutable keyHash;
@@ -86,7 +87,7 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 			block.timestamp
 		);
 
-		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 500000, 3);
+		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 1000000, 3);
 		randomRequests[requestId] = RandomRequest(true, false, new uint256[](0), tokenId, 0, ActionRequest.LEVEL);
 
 		_safeMint(msg.sender, tokenId);
@@ -107,12 +108,45 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 
 		if (fighter.xp < xpRequired) revert Errors.NotEnoughXP();
 
-		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 500000, 3);
+		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 1000000, 3);
 		randomRequests[requestId] = RandomRequest(true, false, new uint256[](0), _fighterId, 0, ActionRequest.LEVEL);
 
 		fighters[_fighterId].level += 1;
 
 		emit RequestNewLevel(fighter, fighter.level, requestId);
+	}
+
+	function fight(uint256 _fighterId, uint256 _opponentId) public {
+		if (ownerOf(_fighterId) != msg.sender) revert Errors.NotTheOwner();
+		if (ownerOf(_opponentId) == address(0)) revert Errors.DoNotExist(); // This ou checker si le level est >= 1 ?
+
+		Fighter memory fighter = fighters[_fighterId];
+
+		if (fighter.xp >= (fighter.level ^ 2) * 20) revert Errors.NeedToLevelUp();
+
+		if (fighter.firstFightTime < (block.timestamp - 12 hours)) {
+			fighter.dailyFights = 0;
+			fighter.firstFightTime = block.timestamp;
+		}
+		if (fighter.dailyFights >= 3) revert Errors.TooManyFights();
+
+		// Add un check pour ne pas fight plusieurs fois une même brute dans la journée ?
+
+		uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subscriptionId, 3, 1000000, 1);
+		randomRequests[requestId] = RandomRequest(
+			true,
+			false,
+			new uint256[](0),
+			_fighterId,
+			_opponentId,
+			ActionRequest.FIGHT
+		);
+
+		fighter.dailyFights += 1;
+
+		fighters[_fighterId] = fighter;
+
+		emit RequestFight(_fighterId, _opponentId, requestId);
 	}
 
 	function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal override {
@@ -123,36 +157,64 @@ contract TheArena is ERC721, VRFConsumerBaseV2 {
 
 		if (randomRequests[_requestId].action == ActionRequest.LEVEL) {
 			_newLevelReward(randomRequests[_requestId]);
+		} else {
+			_fightExecution(randomRequests[_requestId]);
 		}
 	}
 
-	function _newLevelReward(Fighter memory _fighter) internal returns (Fighter memory) {
-		uint256 dice1 = _getRandomValue(0, 12);
-		uint256 dice2 = _getRandomValue(0, 12);
-		uint256 dice3 = _getRandomValue(0, 12);
+	function _newLevelReward(RandomRequest memory _request) internal {
+		uint256 dice1 = _request.randomWords[0] % 12;
+		uint256 dice2 = _request.randomWords[1] % 12;
+		uint256 dice3 = _request.randomWords[2] % 12;
 		uint256 weaponIndex = dice1 + dice2 + dice3;
 
-		if (_fighter.weapons[weaponIndex]) {
-			_fighter.strength += 3;
-			_fighter.agility += 3;
-			_fighter.rapidity += 3;
+		Fighter memory fighter = fighters[_request.fighterId];
+
+		if (fighter.weapons[weaponIndex]) {
+			fighter.strength += 3;
+			fighter.agility += 3;
+			fighter.rapidity += 3;
 		} else {
-			_fighter.weapons[weaponIndex] = true;
-			_fighter.weaponsScore += weaponsScoreUnit[weaponIndex];
+			fighter.weapons[weaponIndex] = true;
+			fighter.weaponsScore += weaponsScoreUnit[weaponIndex];
 		}
 
-		// Soit 'weaponIndex' mais on peut savoir à l'avance la stat qui monte en fonction de l'index du weapon
-		// Soit 'dice1' mais faut un multiple de 3 (ou 4) sinon la probabilité entre chaque stat à monter n'est pas égale et ça se verra à grande échelle
+		// 'dice1' needs to be multiple of 4 for an equal proba of each stats
 		uint256 increaseStat = dice1 % 4;
 
 		if (increaseStat == 0) {
-			_fighter.strength += 3;
+			fighter.strength += 3;
 		} else if (increaseStat == 1) {
-			_fighter.agility += 3;
+			fighter.agility += 3;
 		} else if (increaseStat == 2) {
-			_fighter.rapidity += 3;
+			fighter.rapidity += 3;
 		}
 
-		return _fighter; // Return le nouveau fighter, et les nouveaux attributs ?
+		fighters[_request.fighterId] = fighter;
+
+		emit NewLevel(fighter, fighter.level, weaponIndex, increaseStat);
+	}
+
+	function _fightExecution(RandomRequest memory _request) internal {
+		uint256 randomNumber = _request.randomWords[0] % 100;
+
+		Fighter memory fighter = fighters[_request.fighterId];
+		Fighter memory opponent = fighters[_request.opponentId];
+
+		bool isWinner = randomNumber < 50; // 50% for now, find equation for fight winner proba determination
+
+		uint256 newXp = (fighter.level * 2) + 20;
+		if (isWinner) newXp = ((fighter.level * 4) + 40) / (fighter.level / opponent.level);
+
+		fighter.xp += newXp;
+
+		fighters[_request.fighterId] = fighter;
+
+		emit Fight(_request.fighterId, _request.opponentId, isWinner, newXp);
+	}
+
+	function withdrawFunds() public {
+		(bool success, ) = payable(msg.sender).call{ value: address(this).balance }("");
+		require(success, "Failed");
 	}
 }

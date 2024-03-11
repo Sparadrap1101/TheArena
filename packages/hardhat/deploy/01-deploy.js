@@ -5,9 +5,9 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const vrfCoordinatorAddr = "";
-  const keyHash = "";
-  const subscriptionId = 0;
+  const vrfCoordinatorAddr = "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed";
+  const keyHash = "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f";
+  const subscriptionId = 6715;
   const weaponsScoreUnit = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
     31, 32, 33,
