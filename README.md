@@ -8,9 +8,13 @@ To get started with 🏟️ **TheArena** ⚔️, follow the steps below:
 
 ```
 $ git clone https://github.com/Sparadrap1101/TheArena
+```
 
+```
 $ cd TheArena
+```
 
+```
 $ yarn install
 ```
 
